@@ -1,51 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate, Outlet } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import profile from "../../assets/profile.png";
 import notification from "../../assets/notification.png";
 import chat from "../../assets/chat.png";
-import { Sidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar";
 import Popups from "reactjs-popup";
 import Popup from "../Popup/Popup";
 import Cookies from "js-cookie";
 import axios from "axios";
-
-// import Table from "react-bootstrap/Table";
-// import * as React from "https://cdn.skypack.dev/react@17.0.1";
-// import * as ReactDOM from "https://cdn.skypack.dev/react-dom@17.0.1";
-
-// import Dropdown from "react-dropdown";
-// import "react-dropdown/style.css";
-// import Dropdown from 'react-bootstrap/Dropdown';
+import Sidebars from "../Sidebars/Sidebars";
+import FollowUpdate from "../FollowUpdate/FollowUpdate";
 
 const Dashboard = () => {
-  const [name, setName] = useState();
-  const [age, setAge] = useState();
-  const [id, setId] = useState();
+  const [followUpDate, setFollowUpDate] = useState(false);
   const [cookieValue, setCookieValue] = useState("");
   const navigate = useNavigate();
-  const [apiValue, setApiValue] = useState();
-  const [customer1, setCustomer1] = useState({
-    DateofLead: "5-Dec-20",
-    Platform: "Google",
-    CustomerName: "Customer 1",
-    EmailAddress: "Customeremailaddress@domain.com",
-    Service: "Remodel",
-    Stage: "Paid",
-    ClosedDate: "3-Jan-21",
-    LeadTimeDay: "29",
-    ConvertingStatus: "Yes",
-    TotalRevenue: "$500",
-  });
-
-  //   function MenuHeadersExample() {
-  //     return (
-  //       <Dropdown.Menu show>
-  //         <Dropdown.Header>Dropdown header</Dropdown.Header>
-  //         <Dropdown.Item eventKey="2">Another action</Dropdown.Item>
-  //         <Dropdown.Item eventKey="3">Something else here</Dropdown.Item>
-  //       </Dropdown.Menu>
-  //     );
-  //   }
+  const [apiValue, setApiValue] = useState([]);
 
   useEffect(() => {
     const value = Cookies.get("fullName");
@@ -62,8 +31,8 @@ const Dashboard = () => {
         },
       })
       .then((res) => {
-        console.log(res);
-        setApiValue(res.data);
+        console.log(res.data.data);
+        setApiValue(res.data.data);
       })
       .catch((err) => console.log("error", err));
   };
@@ -81,6 +50,10 @@ const Dashboard = () => {
     navigate("/");
   };
 
+  const fol=()=>{
+    setFollowUpDate(!followUpDate)
+  }
+
   return (
     <div>
       <h2>Seller Dashboard</h2>
@@ -95,7 +68,7 @@ const Dashboard = () => {
           margin: "auto",
         }}
       >
-        <h1>Milleniance LMS</h1>
+        <h2>Milleniance LMS</h2>
         <ul style={{ display: "flex", listStyle: "none", gap: "20px" }}>
           <li>
             <img src={chat} alt="" height="30px" />
@@ -129,8 +102,6 @@ const Dashboard = () => {
               </ul>
             </div>
           </li>
-          <li></li>
-          <li></li>
         </ul>
       </nav>
       <div
@@ -140,120 +111,65 @@ const Dashboard = () => {
           justifyContent: "space-between",
         }}
       >
-        <Sidebar style={{ minWidth: "310px" }}>
-          <Menu>
-            <SubMenu label="Charts">
-              <MenuItem> Pie charts </MenuItem>
-              <MenuItem> Line charts </MenuItem>
-            </SubMenu>
-            <MenuItem> Documentation </MenuItem>
-            <MenuItem> Calendar </MenuItem>
-            <SubMenu label="Charts">
-              <MenuItem> Pie charts </MenuItem>
-              <MenuItem> Line charts </MenuItem>
-            </SubMenu>
-            <MenuItem> Documentation </MenuItem>
-            <MenuItem> Calendar </MenuItem>
-            <SubMenu label="Charts">
-              <MenuItem> Pie charts </MenuItem>
-              <MenuItem> Line charts </MenuItem>
-            </SubMenu>
-            <MenuItem> Documentation </MenuItem>
-            <MenuItem> Calendar </MenuItem>
-            <SubMenu label="Charts">
-              <MenuItem> Pie charts </MenuItem>
-              <MenuItem> Line charts </MenuItem>
-            </SubMenu>
-            <MenuItem> Documentation </MenuItem>
-            <MenuItem> Calendar </MenuItem>
-          </Menu>
-        </Sidebar>
+        <Sidebars />
+
         <div
           style={{
             display: "flex",
-            // alignItems: "center",
             width: "90%",
           }}
         >
           <div
             style={{
               border: "solid",
-              //   display: "flex",
-              //   justifyContent: "center",
-              width: "100%",
-              //   margin: "auto",
+              // width: "100%",
             }}
           >
-            <table border="solid" class="table">
+            <table border="solid" class="table" >
               <thead>
                 <tr>
                   <th scope="col">
                     <input type="checkbox" name="checkbox" id="checkbox" />
                   </th>
-                  <th scope="col">Platform</th>
-                  <th scope="col">Customer Name</th>
-                  <th scope="col">Email Address</th>
-                  <th scope="col">Service</th>
-                  <th scope="col">Stage</th>
-                  <th scope="col">Closed Date</th>
-                  <th scope="col">Lead Time(Day)</th>
-                  <th scope="col">Converting Status</th>
-                  <th scope="col">Total Revenue</th>
+                  <th scope="col">companyName</th>
+                  <th scope="col">action</th>
+                  <th scope="col">createdAt</th>
+                  <th scope="col">email</th>
+                  <th scope="col">followUpDate</th>
+                  <th scope="col">lead_id</th>
+                  <th scope="col">location</th>
+                  <th scope="col">message</th>
+                  <th scope="col">mobileNumber</th>
+                  <th scope="col">name</th>
+                  <th scope="col">service</th>
+                  <th scope="col">status</th>
+                  <th scope="col">updatedAt</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr>
-                  <th scope="row">
-                    <input type="checkbox" name="" id="checkbox2" />
-                  </th>
-                  <td>Google</td>
-                  <Popups
-                    trigger={
-                      <td style={{ cursor: "pointer" }}>
-                        {customer1.CustomerName}
-                      </td>
-                    }
-                    position=""
-                  >
-                    <Popup
-                      DateofLead={customer1.DateofLead}
-                      Platform={customer1.Platform}
-                      CustomerName={customer1.CustomerName}
-                      EmailAddress={customer1.EmailAddress}
-                      Service={customer1.Service}
-                      Stage={customer1.Stage}
-                      ClosedDate={customer1.ClosedDate}
-                      LeadTimeDay={customer1.LeadTimeDay}
-                      ConvertingStatus={customer1.ConvertingStatus}
-                      TotalRevenue={customer1.TotalRevenue}
-                    />
-                  </Popups>
-                  <td>Customeremailaddress@domain.com</td>
-                  <td>Remodel</td>
-                  <td>Paid</td>
-                  <td>3-Jan-21</td>
-                  <td>29</td>
-                  <td>Yes</td>
-                  <td>$500</td>
-                </tr>
-                <tr>
-                  <th scope="row">
-                    <input type="checkbox" name="" id="checkbox3" />
-                  </th>
-                  <td>Jacob</td>
-                  <td>Thornton</td>
-                  <td>@fat</td>
-                </tr>
-                <tr>
-                  <th scope="row">
-                    <input type="checkbox" name="" id="checkbox4" />
-                  </th>
-                  <td>Larry</td>
-                  <td>the Bird</td>
-                  <td>@twitter</td>
-                </tr>
-              </tbody>
+              {apiValue.map((element) => {
+                return (
+                  <tbody>
+                    <tr>
+                      <th scope="row"></th>
+                      <td>{element.companyName}</td>
+                      <td><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHB6Tu_jYfNVdP4_4kwZyRgzjQYQq4P3eeLA&s" alt="" width='30px' onClick={fol}/></td>
+                      <td>{element.createdAt}</td>
+                      <td>{element.email}</td>
+                      <td>{element.followUpDate}</td>
+                      <td>{element.lead_id}</td>
+                      <td>{element.location}</td>
+                      <td>{element.message}</td>
+                      <td>{element.mobileNumber}</td>
+                      <td>{element.name}</td>
+                      <td>{element.service}</td>
+                      <td>{element.status}</td>
+                      <td>{element.updatedAt}</td>
+                    </tr>
+                  </tbody>
+                );
+              })}
             </table>
+            {followUpDate?<FollowUpdate/>:null}
           </div>
         </div>
       </div>
