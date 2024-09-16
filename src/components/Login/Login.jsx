@@ -3,13 +3,22 @@ import React, { useState } from "react";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import Dashboard from "../Dashboard/Dashboard";
+import Main from "../Main/Main";
+import "./Login.css";
 
 const Login = () => {
+  const [old, setOld] = useState(true);
   const [value, setValue] = useState([]);
   let [tokens, setTokens] = useState({
     accessToken: "",
     refreshToken: "",
   });
+
+  const toggleOld = () => {
+    setOld(!old);
+  };
+
+  console.log(old);
 
   const [data, setData] = useState({
     id: "",
@@ -62,18 +71,37 @@ const Login = () => {
           secure: true,
         });
 
-        navigate("dashboard");
+        navigate("main");
       })
       .catch((err) => console.log(err));
   };
 
   return (
-    <div>
-      <h1>Seller Login</h1>
-      <div className="m-3">
-        <form className="m-3">
-          <div className="m-3">
-            <label for="exampleInputEmail1" className="form-label">
+    <div className="container mt-5" style={{ display: "flex" }}>
+      <div
+        className="card p-4"
+        style={{
+          width: "50%",
+          margin: "auto",
+          backgroundColor: "#1e1c1c",
+          borderRadius: "10px",
+        }}
+      >
+        <h1 style={{ color: "darkcyan" }}>Seller Login</h1>
+        <h2 style={{ color: "darkcyan" }}>Don't have an account?</h2>
+        <form className="form-group">
+          <div className="mb-4">
+            <label
+              htmlFor="exampleInputEmail1"
+              className="form-label"
+              style={{
+                color: "white",
+                textAlign: "left",
+                left: "200px",
+                fontWeight: "bold",
+                marginTop: "20px",
+              }}
+            >
               Email address
             </label>
             <input
@@ -83,13 +111,20 @@ const Login = () => {
               aria-describedby="emailHelp"
               value={data.id}
               onChange={(e) => setData({ ...data, id: e.target.value })}
+              placeholder="Enter your email"
+              style={{ borderColor: "#ced4da" }}
             />
-            <div id="emailHelp" className="form-text">
-              We'll never share your email with anyone else.
-            </div>
           </div>
-          <div className="m-3">
-            <label for="exampleInputPassword1" className="form-label">
+          <div className="mb-4">
+            <label
+              htmlFor="exampleInputPassword1"
+              className="form-label"
+              style={{
+                color: "white",
+                textAlign: "left",
+                fontWeight: "bold",
+              }}
+            >
               Password
             </label>
             <input
@@ -98,38 +133,51 @@ const Login = () => {
               id="exampleInputPassword1"
               value={data.password}
               onChange={(e) => setData({ ...data, password: e.target.value })}
+              placeholder="Enter your password"
+              style={{ borderColor: "#ced4da" }}
             />
           </div>
-          <div className="m-3 form-check">
-            <input
-              type="checkbox"
-              className="form-check-input"
-              id="exampleCheck1"
-            />
-            <label className="form-check-label" for="exampleCheck1">
-              Check me out
-            </label>
-          </div>
-          <button onClick={handleSubmit} className="btn btn-primary">
+          <button
+            type="button"
+            onClick={handleSubmit}
+            className="btn btn-primary w-20"
+            style={{ backgroundColor: "darkcyan", borderColor: "#007bff" }}
+          >
             Submit
           </button>
         </form>
-        <button>api</button>
-        <div>
-          {value.length ? (
-            <div>
-              {value.map((i) => (
-                <div key={i.id}>
-                  {i.id}, {i.title}
-                </div>
-              ))}
-            </div>
-          ) : (
-            ""
-          )}
-        </div>
       </div>
-      {/* {token1} */}
+      <div>
+        {old ? (
+          <div
+            className="card p-4"
+            style={{
+              width: "50%",
+              // margin: "auto",
+              backgroundColor: "#1e1c1c",
+              borderRadius: "10px",
+            }}
+          >
+            <h1 style={{ color: "darkcyan" }}>New here?</h1>
+            <h2 style={{ color: "darkcyan" }}>Enter your details </h2>
+
+            <button
+              type="button"
+              onClick={toggleOld}
+              className="btn btn-primary w-20"
+              style={{
+                backgroundColor: "darkcyan",
+                borderColor: "#007bff",
+                width: "fitcontent",
+                margin: "auto",
+                marginTop: "20px",
+              }}
+            >
+              Sign Up
+            </button>
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 };

@@ -1,20 +1,21 @@
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import profile from "../../assets/profile.png";
-import notification from "../../assets/notification.png";
-import chat from "../../assets/chat.png";
-import Popups from "reactjs-popup";
+import React, { useEffect, useState } from "react";
+import FollowUpdate from "../FollowUpdate/FollowUpdate";
+import CSV from "../CSV/CSV";
+import EXCEL from "../EXCEL/EXCEL";
 import Popup from "../Popup/Popup";
 import Cookies from "js-cookie";
 import axios from "axios";
+import Navbar from "../Navbar/Navbar";
 import Sidebars from "../Sidebars/Sidebars";
-import FollowUpdate from "../FollowUpdate/FollowUpdate";
 
 const Dashboard = () => {
-  const [followUpDate, setFollowUpDate] = useState(false);
-  const [cookieValue, setCookieValue] = useState("");
-  const navigate = useNavigate();
   const [apiValue, setApiValue] = useState([]);
+  const [followUpDate, setFollowUpDate] = useState(false);
+  const [popup, setPopup] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [excel, setExcel] = useState(false);
+  const [csv, setCsv] = useState(false);
+  const [cookieValue, setCookieValue] = useState("");
 
   useEffect(() => {
     const value = Cookies.get("fullName");
@@ -22,154 +23,285 @@ const Dashboard = () => {
     apiData();
   }, []);
 
+  const toggleExcel = () => {
+    setExcel(!excel);
+  };
+  const toggleCsv = () => {
+    setCsv(!csv);
+  };
+  const togglePopup = () => {
+    setPopup(!popup);
+  };
+
   const apiData = async () => {
     const tokenValue = Cookies.get("accessToken");
-    await axios
-      .get("https://milleniance-lms.onrender.com/api/v1/agent/getLeads", {
-        headers: {
-          Authorization: `Bearer ${tokenValue}`,
-        },
-      })
-      .then((res) => {
-        console.log(res.data.data);
-        setApiValue(res.data.data);
-      })
-      .catch((err) => console.log("error", err));
+    try {
+      const res = await axios.get(
+        "https://milleniance-lms.onrender.com/api/v1/agent/getLeads",
+        {
+          headers: {
+            Authorization: `Bearer ${tokenValue}`,
+          },
+        }
+      );
+      setApiValue(res.data.data);
+      console.log(res.data.data);
+    } catch (err) {
+      console.error("error", err);
+    }
   };
 
-  const logout = () => {
-    Cookies.remove("_id");
-    Cookies.remove("accessToken");
-    Cookies.remove("address");
-    Cookies.remove("agent_id");
-    Cookies.remove("company_name");
-    Cookies.remove("email");
-    Cookies.remove("fullName");
-    Cookies.remove("phone_number");
-    Cookies.remove("refreshToken");
-    navigate("/");
+  const toggleFollowUpDate = () => {
+    setFollowUpDate(!followUpDate);
   };
-
-  const fol=()=>{
-    setFollowUpDate(!followUpDate)
-  }
 
   return (
     <div>
-      <h2>Seller Dashboard</h2>
-      <h3>{cookieValue}</h3>
-      <br />
-      <nav
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          width: "98%",
-          margin: "auto",
-        }}
-      >
-        <h2>Milleniance LMS</h2>
-        <ul style={{ display: "flex", listStyle: "none", gap: "20px" }}>
-          <li>
-            <img src={chat} alt="" height="30px" />
-          </li>
-          <li>
-            <img src={notification} alt="" height="30px" />
-          </li>
-          <li>
-            <div class="dropdown">
-              <img
-                src={profile}
-                alt=""
-                class="dropdown-toggle"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-                height="30px"
-              />
-              <ul style={{ textDecoration: "none" }} class="dropdown-menu ">
-                <Link style={{ textDecoration: "none" }} to="/profile">
-                  <li class="dropdown-item">Profile</li>
-                </Link>
-                <li onClick={logout} class="dropdown-item">
-                  Logout{" "}
-                </li>
-                <Link style={{ textDecoration: "none" }} to="setting">
-                  <li class="dropdown-item">Setting </li>
-                </Link>
-                <Link style={{ textDecoration: "none" }} to="automation">
-                  <li class="dropdown-item">Automation Setting </li>
-                </Link>
-              </ul>
-            </div>
-          </li>
-        </ul>
-      </nav>
+      <Navbar/>
+      <Sidebars />
       <div
         style={{
-          margin: "10px",
           display: "flex",
-          justifyContent: "space-between",
+          flex: "1",
+          flexDirection: "column",
+          padding: "15px",
+          position: "absolute",
+          top: "58px",
+          left: "250px",
         }}
       >
-        <Sidebars />
-
-        <div
-          style={{
-            display: "flex",
-            width: "90%",
-          }}
-        >
-          <div
+        <div>
+          <ul
             style={{
-              border: "solid",
-              // width: "100%",
+              display: "flex",
+              listStyle: "none",
+              justifyContent: "right",
+              marginRight: "180px",
+              textDecoration: "none",
+              gap: "10px",
+              color: "black",
+              // position: "relative",
             }}
           >
-            <table border="solid" class="table" >
+            <li
+              onClick={toggleCsv}
+              style={{ textDecoration: "none", color: "black" }}
+            >
+              <img
+                src="https://cdn-icons-png.flaticon.com/128/28/28842.png"
+                alt="Chat"
+                height="30px"
+                style={{ cursor: "pointer" }}
+              />
+              <h6>Upload bulk CSV</h6>
+            </li>
+
+            <li
+              onClick={toggleExcel}
+              style={{ textDecoration: "none", color: "black" }}
+            >
+              <img
+                src="https://cdn-icons-png.flaticon.com/128/29/29611.png"
+                alt="Chat"
+                height="30px"
+                style={{ cursor: "pointer" }}
+              />
+              <h6>Upload bulk EXCEL</h6>
+            </li>
+          </ul>
+          <div
+            style={{
+              flex: "1",
+              backgroundColor: "#ffffff",
+              borderRadius: "4px",
+              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+            }}
+          >
+            <table
+              style={{
+                width: "100%",
+                borderCollapse: "collapse",
+                backgroundColor: "#ffffff",
+              }}
+            >
               <thead>
                 <tr>
-                  <th scope="col">
+                  <th
+                    style={{
+                      padding: "8px",
+                      backgroundColor: "darkcyan",
+                      color: "#ffffff",
+                      textAlign: "left",
+                    }}
+                  >
                     <input type="checkbox" name="checkbox" id="checkbox" />
                   </th>
-                  <th scope="col">companyName</th>
-                  <th scope="col">action</th>
-                  <th scope="col">createdAt</th>
-                  <th scope="col">email</th>
-                  <th scope="col">followUpDate</th>
-                  <th scope="col">lead_id</th>
-                  <th scope="col">location</th>
-                  <th scope="col">message</th>
-                  <th scope="col">mobileNumber</th>
-                  <th scope="col">name</th>
-                  <th scope="col">service</th>
-                  <th scope="col">status</th>
-                  <th scope="col">updatedAt</th>
+                  <th
+                    style={{
+                      padding: "8px",
+                      backgroundColor: "darkcyan",
+                      color: "#ffffff",
+                      textAlign: "left",
+                    }}
+                  >
+                    Company Name
+                  </th>
+                  <th
+                    style={{
+                      padding: "8px",
+                      backgroundColor: "darkcyan",
+                      color: "#ffffff",
+                      textAlign: "left",
+                    }}
+                  >
+                    Action
+                  </th>
+                  <th
+                    style={{
+                      padding: "8px",
+                      backgroundColor: "darkcyan",
+                      color: "#ffffff",
+                      textAlign: "left",
+                    }}
+                  >
+                    Created At
+                  </th>
+                  <th
+                    style={{
+                      padding: "8px",
+                      backgroundColor: "darkcyan",
+                      color: "#ffffff",
+                      textAlign: "left",
+                    }}
+                  >
+                    Email
+                  </th>
+                  <th
+                    style={{
+                      padding: "8px",
+                      backgroundColor: "darkcyan",
+                      color: "#ffffff",
+                      textAlign: "left",
+                    }}
+                  >
+                    Follow-Up Date
+                  </th>
+                  <th
+                    style={{
+                      padding: "8px",
+                      backgroundColor: "darkcyan",
+                      color: "#ffffff",
+                      textAlign: "left",
+                    }}
+                  >
+                    Lead ID
+                  </th>
+                  <th
+                    style={{
+                      padding: "8px",
+                      backgroundColor: "darkcyan",
+                      color: "#ffffff",
+                      textAlign: "left",
+                    }}
+                  >
+                    Location
+                  </th>
+                  <th
+                    style={{
+                      padding: "8px",
+                      backgroundColor: "darkcyan",
+                      color: "#ffffff",
+                      textAlign: "left",
+                    }}
+                  >
+                    Message
+                  </th>
+                  <th
+                    style={{
+                      padding: "8px",
+                      backgroundColor: "darkcyan",
+                      color: "#ffffff",
+                      textAlign: "left",
+                    }}
+                  >
+                    Mobile Number
+                  </th>
+                  <th
+                    style={{
+                      padding: "8px",
+                      backgroundColor: "darkcyan",
+                      color: "#ffffff",
+                      textAlign: "left",
+                    }}
+                  >
+                    Name
+                  </th>
+                  <th
+                    style={{
+                      padding: "8px",
+                      backgroundColor: "darkcyan",
+                      color: "#ffffff",
+                      textAlign: "left",
+                    }}
+                  >
+                    Service
+                  </th>
+                  <th
+                    style={{
+                      padding: "8px",
+                      backgroundColor: "darkcyan",
+                      color: "#ffffff",
+                      textAlign: "left",
+                    }}
+                  >
+                    Status
+                  </th>
                 </tr>
               </thead>
-              {apiValue.map((element) => {
-                return (
-                  <tbody>
-                    <tr>
-                      <th scope="row"></th>
-                      <td>{element.companyName}</td>
-                      <td><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHB6Tu_jYfNVdP4_4kwZyRgzjQYQq4P3eeLA&s" alt="" width='30px' onClick={fol}/></td>
-                      <td>{element.createdAt}</td>
-                      <td>{element.email}</td>
-                      <td>{element.followUpDate}</td>
-                      <td>{element.lead_id}</td>
-                      <td>{element.location}</td>
-                      <td>{element.message}</td>
-                      <td>{element.mobileNumber}</td>
-                      <td>{element.name}</td>
-                      <td>{element.service}</td>
-                      <td>{element.status}</td>
-                      <td>{element.updatedAt}</td>
-                    </tr>
-                  </tbody>
-                );
-              })}
+              <tbody>
+                {apiValue.map((element, i) => (
+                  <tr
+                    key={element.lead_id}
+                    style={{
+                      cursor: "pointer",
+                      "&:hover": { backgroundColor: "#f1f1f1" },
+                    }}
+                  >
+                    <td style={{ padding: "8px" }}></td>
+                    <td style={{ padding: "8px" }}>{element.companyName}</td>
+                    <td style={{ padding: "8px" }}>
+                      <img
+                        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHB6Tu_jYfNVdP4_4kwZyRgzjQYQq4P3eeLA&s"
+                        alt="Action"
+                        width="30px"
+                        onClick={toggleFollowUpDate}
+                        style={{ cursor: "pointer" }}
+                      />
+                    </td>
+                    <td style={{ padding: "8px" }}>{element.createdAt}</td>
+                    <td style={{ padding: "8px" }}>{element.email}</td>
+                    <td style={{ padding: "8px" }}>{element.followUpDate}</td>
+                    <td
+                      // onClick={() => handleSelectItem(element)}
+                      style={{ padding: "8px" }}
+                    >
+                      {element.lead_id}
+                    </td>
+                    <td style={{ padding: "8px" }}>{element.location}</td>
+                    <td style={{ padding: "8px" }}>{element.message}</td>
+                    <td style={{ padding: "8px" }}>{element.mobileNumber}</td>
+                    <td style={{ padding: "8px" }}>{element.name}</td>
+                    <td style={{ padding: "8px" }}>{element.service}</td>
+                    <td style={{ padding: "8px" }}>{element.status}</td>
+                    {/* {array.push(element)} */}
+                  </tr>
+                ))}
+              </tbody>
             </table>
-            {followUpDate?<FollowUpdate/>:null}
+            {popup && selectedItem && <Popup element={selectedItem} />}
+            {followUpDate && <FollowUpdate />}
+            {csv && <CSV />}
+            {excel && <EXCEL />}
           </div>
         </div>
       </div>
